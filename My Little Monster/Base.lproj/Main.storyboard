@@ -122,6 +122,17 @@
                                     </mask>
                                 </variation>
                             </stackView>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dPt-Hs-HCH">
+                                <rect key="frame" x="244" y="243" width="113" height="113"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="113" id="I86-iN-guw"/>
+                                    <constraint firstAttribute="width" constant="113" id="Iz6-7j-1D6"/>
+                                </constraints>
+                                <state key="normal" image="restartButton"/>
+                                <connections>
+                                    <action selector="restartButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="SnD-rl-p0v"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -137,10 +148,12 @@
                                 <variation key="heightClass=regular-widthClass=compact" constant="8"/>
                             </constraint>
                             <constraint firstItem="BUb-Md-sQu" firstAttribute="centerY" secondItem="4xl-MX-V24" secondAttribute="centerY" id="CHh-bI-thk"/>
+                            <constraint firstItem="dPt-Hs-HCH" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Dq7-Yu-K7H"/>
                             <constraint firstItem="Fmz-Mp-OX3" firstAttribute="top" secondItem="CHw-rF-X5N" secondAttribute="bottom" constant="5" id="K9y-vH-5TV"/>
                             <constraint firstItem="4xl-MX-V24" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="L2G-e9-8QA"/>
                             <constraint firstItem="Fmz-Mp-OX3" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Oxg-uF-QB6"/>
                             <constraint firstItem="Tpv-tD-dKu" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="R2I-1H-Wye"/>
+                            <constraint firstItem="dPt-Hs-HCH" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="T4d-Yz-ngo"/>
                             <constraint firstItem="BUb-Md-sQu" firstAttribute="centerX" secondItem="4xl-MX-V24" secondAttribute="centerX" constant="-4" id="Ttx-Ou-tt7"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="fDF-zO-3fD" secondAttribute="bottom" constant="54" id="jQM-1L-cG0"/>
                             <constraint firstItem="fDF-zO-3fD" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="24" id="p69-aV-ipS"/>
@@ -183,11 +196,12 @@
                         <outlet property="penalty1Image" destination="na0-w2-8rF" id="2eV-bM-0J0"/>
                         <outlet property="penalty2Image" destination="lvO-qj-9ax" id="9xu-ag-b1A"/>
                         <outlet property="penalty3Image" destination="eCe-KA-pr7" id="X0m-a5-rnu"/>
+                        <outlet property="restartButton" destination="dPt-Hs-HCH" id="7uj-KR-AeN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="490" y="283.5"/>
+            <point key="canvasLocation" x="490" y="283"/>
         </scene>
     </scenes>
     <resources>
@@ -197,6 +211,7 @@
         <image name="heart" width="95" height="98"/>
         <image name="idle1" width="889" height="615"/>
         <image name="livespanel" width="468" height="137"/>
+        <image name="restartButton" width="170" height="170"/>
         <image name="skull" width="95" height="98"/>
     </resources>
 </document>
