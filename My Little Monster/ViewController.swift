@@ -11,6 +11,8 @@ import AVFoundation
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var restartButton: UIButton!
+    
     @IBOutlet weak var monsterImage: MonsterImage!
     
     @IBOutlet weak var foodImage: DragImage!
@@ -41,6 +43,17 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        initializeGame()
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    //: CREATE THE INITIAL GAME STATE WITH SOUNDS AND A TIMER
+    func initializeGame() {
+        
         foodImage.dropTarget = monsterImage
         heartImage.dropTarget = monsterImage
         
@@ -51,6 +64,15 @@ class ViewController: UIViewController {
         //this class is the observer. It will listen for the notification
         // selector syntax --> selector: #selector(class.functionToBeCalled) if function has parameters use (class.functionToBeCalled(_:))
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ViewController.itemDroppedOnCharacter(_:)), name: "onTargetDropped", object: nil)
+        
+        initializeSounds()
+        
+        startTimer()
+        
+    }
+    
+    //: INITIALIZE SOUNDS OF THE GAME. CALLED WHEN GAME GETS INITIALIZED
+    func initializeSounds() {
         
         do {
             try musicPlayer = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("cave-music", ofType: "mp3")!))
@@ -70,15 +92,10 @@ class ViewController: UIViewController {
         sfxHeart.prepareToPlay()
         sfxBite.prepareToPlay()
         sfxDeath.prepareToPlay()
-        
-        startTimer()
-    }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
+    //: DETECT WHEN FOOD/HEART IS DROPPED ON THE MONSTER. PLAY APPROPRIATE SOUND AND DIM THE ITEMS AGAIN
     func itemDroppedOnCharacter(notification: AnyObject) {
         monsterHappy = true     //make the monster happy
         
@@ -100,14 +117,17 @@ class ViewController: UIViewController {
         
     }
     
+    //: START A TIMER THAT FIRES EVERY 2 SECONDS AND CHECKS THE GAMESTATE TO SEE IF THE MONSTER IS HAPPY OR NOT
     func startTimer() {
         if timer != nil {
             timer.invalidate()
         }
         
-        timer = NSTimer.scheduledTimerWithTimeInterval(1.5, target: self, selector: #selector(ViewController.changeGameState), userInfo: nil, repeats: true)
+        timer = NSTimer.scheduledTimerWithTimeInterval(2.0, target: self, selector: #selector(ViewController.changeGameState), userInfo: nil, repeats: true)
     }
     
+    //: CHECK THE HAPPINESS OF THE MONSTER. IF NOT HAPPY, ADD A PENALTY AND CHECK TOTAL PENALTIES
+    //  IF HAPPY, RANDOMLY DISPLAY FOOD OR HEART
     func changeGameState() {
         
         if !monsterHappy {
@@ -115,20 +135,18 @@ class ViewController: UIViewController {
             
             sfxSkull.play()
             
-            if penalties == 1 {
-                penalty1Image.alpha = OPAQUE
-                penalty2Image.alpha = DIM_ALPHA
-            } else if penalties == 2 {
-                penalty2Image.alpha = OPAQUE
-                penalty3Image.alpha = DIM_ALPHA
-            } else if (penalties >= 3) {
-                penalty3Image.alpha = OPAQUE
-            } else {
-                penalty1Image.alpha = DIM_ALPHA
-                penalty2Image.alpha = DIM_ALPHA
-                penalty3Image.alpha = DIM_ALPHA
-            }
+            checkPenalties()
         }
+        
+        if penalties >= MAX_PENALTIES {
+            gameOver()
+        } else {
+            randomizeItem()
+        }
+    }
+    
+    //: RANDOMLY ASSIGN AN ITEM FOR THE USER TO DRAG
+    func randomizeItem() {
         
         let random = arc4random_uniform(2)
         
@@ -148,13 +166,27 @@ class ViewController: UIViewController {
         
         currentItem = random
         monsterHappy = false
-
+    }
+    
+    //:
+    func checkPenalties() {
         
-        if penalties >= MAX_PENALTIES {
-            gameOver()
+        if penalties == 1 {
+            penalty1Image.alpha = OPAQUE
+            penalty2Image.alpha = DIM_ALPHA
+        } else if penalties == 2 {
+            penalty2Image.alpha = OPAQUE
+            penalty3Image.alpha = DIM_ALPHA
+        } else if (penalties >= 3) {
+            penalty3Image.alpha = OPAQUE
+        } else {
+            penalty1Image.alpha = DIM_ALPHA
+            penalty2Image.alpha = DIM_ALPHA
+            penalty3Image.alpha = DIM_ALPHA
         }
     }
     
+    //: KILL THE MONSTER, PLAY HIS DEATH SOUND, DIM ALL THE ITEMS, SHOW THE RESTART BUTTON, STOP THE TIMER
     func gameOver() {
         timer.invalidate()
         monsterImage.playDeathAnimation()
@@ -166,6 +198,30 @@ class ViewController: UIViewController {
         
         heartImage.alpha = DIM_ALPHA
         heartImage.userInteractionEnabled = false
+        
+        restartButton.hidden = false
     }
+    
+    //: EVERYTHING GOES BACK TO ITS INITIAL STATE UPON PRESSING RESTART
+    @IBAction func restartButtonPressed(sender: UIButton) {
+        
+        //reset the music
+        musicPlayer.currentTime = 0
+        musicPlayer.play()
+        restartButton.hidden = true
+        
+        //reset the penalties
+        penalties = 0
+
+        //revive the monster
+        monsterImage.playIdleAnimation()
+        
+        //restart the game
+        initializeGame()
+        
+        //begin randomizing items again
+        randomizeItem()
+    }
+    
 }
 
